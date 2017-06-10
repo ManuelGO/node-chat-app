@@ -10,21 +10,37 @@ var app = express();
 var server = http.createServer(app);
 var io = socketIO(server); //para comunicarnos cliente-server y viceversa.
 
-app.use(express.static(publicPath));
+app.use(express.static(publicPath)); 
 
 
 io.on('connection', (socket)=>{
 	console.log('New user connected');
 
 	socket.emit('newMessage', {
-		from: 'example@example.com',
-		text: 'hi!',
-		createdAt: Date().toString()
+		from: 'Admin',
+		text: 'Welcome to this chat app'
+	});
 
+	socket.broadcast.emit('newMessage', {
+		from: 'Admin',
+		text: 'New user Joined',
+		createAt: new Date().getTime()
 	});
 
 	socket.on('createMessage', (message)=>{
 		console.log('Message', message);
+		//io.emit emite un evento a todas las conecciones al serveidor"
+		io.emit('newMessage', {
+			from: message.from,
+			text: message.text,
+			createdAt: new Date().getTime()
+		});
+		//socket.broadcast.emit emite un evento a todas las conexiones, menos al que lo envia.
+		// socket.broadcast.emit('newMessage', {
+		// 	from: message.from,
+		// 	text: message.text,
+		// 	createAt: new Date().getTime()
+		// });
 	});
 
 	socket.on('disconnect', ()=>{
