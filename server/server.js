@@ -22,10 +22,11 @@ io.on('connection', (socket)=>{
 
 	socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined.'));
 
-	socket.on('createMessage', (message)=>{
+	socket.on('createMessage', (message, callback)=>{
 		console.log('Message', message);
 		//io.emit emite un evento a todas las conecciones al serveidor"
 		io.emit('newMessage', generateMessage(message.from, message.text));
+		callback();
 		//socket.broadcast.emit emite un evento a todas las conexiones, menos al que lo envia.
 		// socket.broadcast.emit('newMessage', {
 		// 	from: message.from,
